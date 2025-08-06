@@ -1,0 +1,30 @@
+version: '3.6'
+
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=$Password
+      - DOCKER_INFLUXDB_INIT_ORG=home
+      - DOCKER_INFLUXDB_INIT_BUCKET=sensordaten
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=8abUSEvE
+
+  telegraf:
+    image: telegraf:1.30
+    container_name: telegraf
+    depends_on:
+      - influxdb
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    environment:
+      - HOSTNAME=telegraf
+
+volumes:
+  influxdb_data:
